@@ -46,7 +46,7 @@ def _newtDivDiffFast(xn, yn, n):
             table[j, i] = (table[j+1, i-1] - table[j, i-1]) / (xn[j+i] - xn[j])
     return table[0][n]
 
-def product(arr):
+def _product(arr):
     prod = 1
     for n in arr:
         prod *= n
@@ -54,7 +54,7 @@ def product(arr):
 
 def newton(xs, xn, yn):
     assert (N := len(xn)) == len(yn)
-    interp = lambda x: yn[0] + sum([_newtDivDiffFast(xn, yn, i) * product([x - xn[j]for j in range(0, i)]) for i in range(1, N)])
+    interp = lambda x: yn[0] + sum([_newtDivDiffFast(xn, yn,_ i) * product([x - xn[j]for j in range(0, i)]) for i in range(1, N)])
     return list(map(interp, xs))
 
 def _splineCoeff(xn, yn, va, vb):
