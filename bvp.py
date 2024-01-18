@@ -13,13 +13,13 @@ def finiteDiff(ODE, a, b, BC_a, BC_b, BC_C, N) -> ([float], [float]):
         Example for `y'' + 2xy' + 2 = cos(3x)`:
             `ODE = lambda X: (2*X, 2*np.ones_like(X), np.cos(3X))`
     a : float
-        left boundary position of IVP, `x = a`
+        left boundary position of BVP, `x = a`
     b : float
-        right boundary position of IVP, `x = b`
+        right boundary position of BVP, `x = b`
     BC_a : float
-        left boundary value of IVP, see C for application
+        left boundary value of BVP, see C for application
     BC_b : float
-        right boundary value of IVP, see C for application
+        right boundary value of BVP, see C for application
     BC_C : [float]
         an array of 4 coefficients that define the following system:
             `(x = a): BC_C[0] * y'(a) + BC_C[1] * y(a) = BC_a`
