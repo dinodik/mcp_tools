@@ -86,7 +86,7 @@ def newton(X, xn, yn) -> [float]:
         array of y-values of known nodes
     """
     assert (N := len(xn)) == len(yn)
-    interp = lambda x: yn[0] + sum([_newtDivDiffFast(xn, yn, i) * product([x - xn[j]for j in range(0, i)]) for i in range(1, N)])
+    interp = lambda x: yn[0] + sum([_newtDivDiffFast(xn, yn, i) * _product([x - xn[j]for j in range(0, i)]) for i in range(1, N)])
     return list(map(interp, X))
 
 def _splineCoeff(xn, yn, va, vb) -> [float]:
