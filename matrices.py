@@ -27,7 +27,7 @@ def _is_diag_dom(M) -> bool:
 
 def jacobi(M: [[float]], b: [float], tol=1e-5) -> [[float]]:
     """
-    Solves a system of equations `M @ x = b` iteratively with an absolute crude error estimate of `tol`.
+    Solves a system of equations `M @ x = b` iteratively with an relative crude error estimate of `tol`.
     
     Parameters
     ----------
@@ -35,6 +35,8 @@ def jacobi(M: [[float]], b: [float], tol=1e-5) -> [[float]]:
         Matrix defining the system of equation coefficients
     b : [float]
         Vector defining the RHS of the system of equations
+    tol : float
+        Minimum relative crude error between guesses before iterations finish
 
     Returns
     -------
@@ -48,13 +50,13 @@ def jacobi(M: [[float]], b: [float], tol=1e-5) -> [[float]]:
     M_nodiag = M - np.diag(M_diag) # diagonal removed
     while True:
         X_new = (b - M_nodiag @ X_old) / M_diag
-        if np.all(abs(X_new - X_old) < tol): break
+        if np.all(abs((X_new - X_old)/X_new) < tol): break
         X_old, X_new = X_new, X_old
     return X_new
 
-def gaussSeidel(M, b, tol=1e-5) -> [[float]]:
+def gaussSeidel(M, b, relax=1, tol=1e-5) -> [[float]]:
     """
-    Solves a system of equations `M @ x = b` iteratively with an absolute crude error estimate of `tol`. Different to Jacobi method by using new guesses immediately after they are calculated. However, this implementation is slow than the Jacobi one despite theory as Numpy vectorising becomes more difficult.
+    Solves a system of equations `M @ x = b` iteratively with an relative crude error estimate of `tol`. Different to Jacobi method by using new guesses immediately after they are calculated. However, this implementation is slow than the Jacobi one despite theory as Numpy vectorising becomes more difficult. This method also allows for a relaxation factor `relax`.
     
     Parameters
     ----------
@@ -62,6 +64,10 @@ def gaussSeidel(M, b, tol=1e-5) -> [[float]]:
         Matrix defining the system of equation coefficients
     b : [float]
         Vector defining the RHS of the system of equations
+    relax : float
+        Relaxation factor to reduce iteration count when greater than 1. Max of 2
+    tol : float
+        Minimum relative crude error between guesses before iterations finish
 
     Returns
     -------
@@ -77,6 +83,7 @@ def gaussSeidel(M, b, tol=1e-5) -> [[float]]:
     while True:
         for i in range(N):
             X_guess[i] = (b[i] - M_nodiag[i] @ X_guess) / M_diag[i]
-        if np.all(abs(X_guess - X_buffer) < tol): break
+            X_guess[i] = relax * X_guess[i] + (1 - relax) * X_buffer[i]
+        if np.all(abs((X_guess - X_buffer)/X_guess) < tol): break
         X_buffer = X_guess.copy()
     return X_guess
