@@ -50,7 +50,8 @@ def jacobi(M: [[float]], b: [float], tol=1e-5) -> [[float]]:
     M_nodiag = M - np.diag(M_diag) # diagonal removed
     while True:
         X_new = (b - M_nodiag @ X_old) / M_diag
-        if np.all(abs((X_new - X_old)/X_new) < tol): break
+        not_zero = np.s_[X_new != 0] # avoid invalid value in divide for trivial zero
+        if np.all(abs((X_new[not_zero] - X_old[not_zero])/X_new[not_zero]) < tol): break
         X_old, X_new = X_new, X_old
     return X_new
 
@@ -84,6 +85,7 @@ def gaussSeidel(M, b, relax=1, tol=1e-5) -> [[float]]:
         for i in range(N):
             X_guess[i] = (b[i] - M_nodiag[i] @ X_guess) / M_diag[i]
             X_guess[i] = relax * X_guess[i] + (1 - relax) * X_buffer[i]
-        if np.all(abs((X_guess - X_buffer)/X_guess) < tol): break
+        not_zero = np.s_[X_guess != 0] # avoid invalid value in divide for trivial zero
+        if np.all(abs((X_guess[not_zero] - X_buffer[not_zero])/X_guess[not_zero]) < tol): break
         X_buffer = X_guess.copy()
     return X_guess
